@@ -1,2 +1,2 @@
-# COE379L Project 1 Folder
-Part1 and part2 go into one jupyter notebook. Part3 is a 2 page report. Due Feb 22. 5PM.
+# COE379L Project 1
+Part 1 and Part 2 can be found in the .ipynb jupyter notebook file. Part 3 is a 2-page report labeled Project_1_writeup.pdf.
