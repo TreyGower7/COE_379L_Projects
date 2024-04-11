@@ -45,9 +45,18 @@ curl -X POST -H "Content-Type: application/json" -d '{"url": "https://github.com
 
 2. Running a python script
 
-Here is the python script:
+Here are the python scripts:
+```
+rsp = requests.get("http://172.17.0.1:5000/models")
+rsp.json()
+```
+> The GET method
+
 ```
 url = "https://github.com/TreyGower7/COE_379L_Projects/blob/main/Project_3/cnn-split/test/damage/-93.578271_30.779923999999998.jpeg?raw=true"
 rsp = requests.post("http://172.17.0.1:5000/models", json={"url": url})
 rsp.json()
 ```
+> The POST method
+
+In both cases, you would input your own url to have the model predict if the building is damaged or not.
