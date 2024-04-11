@@ -52,7 +52,7 @@ import requests
 rsp = requests.get("http://172.17.0.1:5000/models")
 rsp.json()
 ```
-> The GET method
+> The GET method.
 > Make sure to import the requests!!!
 
 ```
