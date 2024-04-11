@@ -1,4 +1,6 @@
-# COE379L Project 3
+<a name="COE379L Project 3"></a>
+
+<div align="center">
 
 This git repo contains the script ``api.py``. This script is a flask application that is used to predict whether a building is damaged or not. The data returned is explained in the sections below. An in-depth writeup about the project is located in the ``Project 3 Writeup.pdf`` file.
 
