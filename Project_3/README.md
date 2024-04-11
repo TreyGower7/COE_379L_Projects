@@ -44,6 +44,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"url": "https://github.com
 > The ``-X POST -H "Content-Type: application/json" -d`` is CRUCIAL to make this all work!
 
 2. Running a python script
+
 Here is the python script:
 ```
 url = "https://github.com/TreyGower7/COE_379L_Projects/blob/main/Project_3/cnn-split/test/damage/-93.578271_30.779923999999998.jpeg?raw=true"
