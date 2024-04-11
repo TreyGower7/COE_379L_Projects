@@ -47,10 +47,13 @@ curl -X POST -H "Content-Type: application/json" -d '{"url": "https://github.com
 
 Here are the python scripts:
 ```
+import requests
+
 rsp = requests.get("http://172.17.0.1:5000/models")
 rsp.json()
 ```
 > The GET method
+> Make sure to import the requests!!!
 
 ```
 url = "https://github.com/TreyGower7/COE_379L_Projects/blob/main/Project_3/cnn-split/test/damage/-93.578271_30.779923999999998.jpeg?raw=true"
