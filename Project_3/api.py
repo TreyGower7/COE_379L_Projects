@@ -53,7 +53,7 @@ def preprocess_input(url):
     return data.map(lambda image, label:(rescale(image), label))
 
 @app.route('/models/buildings/v1', methods=['POST'])
-def classify_clothes_image():
+def classify_buildings_image():
     url = request.json.get('url')
     if not url:
         return {"error": "The `url` field is required"}, 404
