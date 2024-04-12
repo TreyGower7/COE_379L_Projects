@@ -7,20 +7,36 @@ This git repo contains the script ``api.py``. This script is a flask application
 ### Starting and Stopping the Inference Server
 > Make sure that the repo is pulled before running everything!
 
-One way to start the server is using the ``docker-compose.yml`` file by running this command:
+Before starting the server, the user must mount the directory that contains all the images for testing with the ``docker-compose.yml`` file.
+
+This is what the file looks like:
+```
+---
+version: "3"
+
+services:
+    flask-app:
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        ports:
+            - 5000:5000
+        image: jaeestee/ml-buildings-api:latest
+        volumes:
+            - ./config.yaml:/config.yaml
+            #- ./cnn-split/test:/cnn-split/test # example
+```
+> An example is given in case the user does not have their own files at hand. Make sure to uncomment the line by removing the '#' before the '-'.
+
+To start the server, run this command:
 ```
 docker-compose up
 ```
 
-Another way is to pull the image down and then run it manually:
-```
-docker pull jaeestee/ml-buildings-api:latest
-```
-
-To run it manually, run this command:
-```
-docker run -it --rm -p 5000:5000 jaeestee/ml-buildings-api:latest
-```
+> Pull the image manually if docker-compose isn't automatically pulling it!
+> ```
+> docker pull jaeestee/ml-buildings-api:latest
+> ```
 
 ### Endpoints
 |Route|Method|What it should do|
@@ -35,13 +51,13 @@ To run in a linux shell use curl, for example:
 ```
 curl http://172.17.0.1:5000/models/buildings/v1
 ```
-> This is the POST method
+> This is the GET method
 
-Here is a sample of the GET method:
+Here is a sample of the POST method:
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"url": "https://github.com/TreyGower7/COE_379L_Projects/blob/main/Project_3/cnn-split/test/damage/-93.578271_30.779923999999998.jpeg?raw=true"}' http://172.17.0.1:5000/models/buildings/v1
+curl -X POST -H "Content-Type: application/json" -d '{"path": "cnn-split/test/damage/-93.722874_30.074742999999998.jpeg"}' http://172.17.0.1:5000/models/buildings/v1
 ```
-> The ``-X POST -H "Content-Type: application/json" -d`` is CRUCIAL to make this all work!
+> The ``-X POST -H "Content-Type: application/json" -d`` is CRUCIAL to make this all work! Also, make sure that the ``path`` value lines up with the volume mount that was created earlier!
 
 2. Running a python script
 
@@ -49,17 +65,23 @@ Here are the python scripts:
 ```
 import requests
 
-rsp = requests.get("http://172.17.0.1:5000/models")
+rsp = requests.get("http://172.17.0.1:5000/models/buildings/v1")
 rsp.json()
 ```
-> The GET method.
-> Make sure to import the requests!!!
+> The GET method. MAKE SURE TO IMPORT REQUESTS!
 
 ```
-url = "https://github.com/TreyGower7/COE_379L_Projects/blob/main/Project_3/cnn-split/test/damage/-93.578271_30.779923999999998.jpeg?raw=true"
-rsp = requests.post("http://172.17.0.1:5000/models", json={"url": url})
+import requests
+
+filename = '-93.722874_30.074742999999998.jpeg'
+path = 'cnn-split/test/damage/' + filename
+
+# make the POST request passing the single test case as the `path` field:
+rsp = requests.post("http://172.17.0.1:5000/models/buildings/v1", json={"path": path})
+
+# print the json response
 rsp.json()
 ```
-> The POST method
+> The POST method. MAKE SURE TO IMPORT REQUESTS!
 
-In both cases, you would input your own url to have the model predict if the building is damaged or not.
+In both POST cases, you would input your own path to have the model predict if the image of the building is damaged or not.
