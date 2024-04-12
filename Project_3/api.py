@@ -1,14 +1,13 @@
 from flask import Flask, request
 import tensorflow as tf
-import numpy as np
 import os
-import requests
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
+import shutil
 
 
 app = Flask(__name__)
 
-model = tf.keras.models.load_model('models/CNN_1.keras')
+model = tf.keras.models.load_model('models/lenet5.keras')
 
 @app.route('/models/buildings/v1', methods=['GET'])
 def model_info():
@@ -16,30 +15,31 @@ def model_info():
         "version": "v1",
         "name": "buildings",
         "description": "Classify images of buildings as containing damage or not containing damage",
-        "number_of_parameters": 1193458
+        "number_of_parameters": 2499822
     }
 
-def preprocess_input(url):
+def preprocess_input(path, filename):
     """
-    Converts user-provided input, an image file, into an array that can be used with the model.
+    Takes a path that the user-inputed and pre-process it so that it can be used with the model.
     This function could raise an exception.
     """
-    # converting the image file
-    name = 'test/image.jpg'
 
+    #removes the directory in case this is called multiple times.
+    #It makes sure the data preprocessing happens to the file requested.
+    shutil.rmtree('test/test', ignore_errors=True)
+
+    #if the directory doesn't exist, create it
     if not os.path.exists('test/test'):
         os.makedirs('test/test')
 
-    response = requests.get(url)
-    image_content = response.content
+    #adding the file to the test directory
+    shutil.copyfile(path, './test/test/' + filename)
 
-    with open('test/test/image.jpg', 'wb') as f:
-        f.write(image_content)
-
-    path = 'test'
+    path = 'test/'
     img_height = 150
     img_width = 150
 
+    #data preprocessing
     data = tf.keras.utils.image_dataset_from_directory(
         path,
         batch_size = 1,
@@ -54,15 +54,18 @@ def preprocess_input(url):
 
 @app.route('/models/buildings/v1', methods=['POST'])
 def classify_buildings_image():
-    url = request.json.get('url')
-    if not url:
-        return {"error": "The `url` field is required"}, 404
+    path = request.json.get('path')
+    if not path:
+        return {"error": "The `path` field is required"}, 404
     try:
-        data = preprocess_input(url)
+        pathinput = path.split('/')
+        filename = pathinput[len(pathinput) - 1]
+        
+        data = preprocess_input(path, filename)
         results = model.predict(data).tolist()
     except Exception as e:
-        return {"error": f"Could not process the `url` field; details: {e}"}, 404
-    return { "result": {"damaged confidence score": results[0][0], 'not damaged confidence score': results[0][1]}}
+        return {"error": f"Could not process the `path` field; details: {e}"}, 404
+    return { "result": {"image name": filename, "damaged confidence score": results[0][0], 'not damaged confidence score': results[0][1]}}
 
 
 # start the development server
